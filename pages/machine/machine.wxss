@@ -1,0 +1,21 @@
+.in-image{
+    position: absolute;
+    object-fit: contain;
+}
+
+.footer{
+    background-color: rgba(0, 0, 0, 0.904);
+    display: flex;
+    justify-content: space-between;
+    height: 30px;   
+}
+.footer_item{
+    border: 0.5px solid white;
+    text-align:center;
+    color: white;
+    width: 35%;
+}
+
+.canvas{
+    position: relative;
+}

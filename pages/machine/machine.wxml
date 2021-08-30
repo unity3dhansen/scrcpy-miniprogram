@@ -1,0 +1,10 @@
+<view>    
+    <view class='canvas' style='width:{{canvasWidth}}px; height:{{canvasHeight}}px'  disable-scroll='true' bindtouchstart="handleStart" bindtouchend="handleEnd" bindtouchmove="handleMove">
+        <image bindload="imgBindload" src="{{imgData}}" class="in-image " style="width:{{imgWidth}}px; height:{{imgHeight}}px; {{rotateStyle}}"></image>
+    </view>
+    <view class="footer">
+        <view class="footer_item" id="Back" bindtap="specialKey" > back </view>
+        <view class="footer_item" id="Home" bindtap="specialKey"> home </view>
+        <view class="footer_item" id="Menu" bindtap="specialKey"> = </view>
+    </view>
+</view>
