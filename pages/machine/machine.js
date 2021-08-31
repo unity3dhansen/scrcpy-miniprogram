@@ -1,7 +1,7 @@
 Page({
     data: {
         footerHeight: '30',
-        keepRation: false,
+        keepRation: true,
         canvasWidth: '100px',
         canvasHeight: '100px',
         imgWidth: '100px',
@@ -9,9 +9,10 @@ Page({
         rotate: false,
         rotateStyle: '',        
         imgData: '',
-        diff: '0px',
         socketOpen: false,
         ratio: 0,
+        alignLeft: 0,
+        alignTop: 0,
         blankStyle: '',
         firstLoad: true,        
     },
@@ -25,11 +26,10 @@ Page({
             canvasHeight: system.windowHeight - footerHeight,
             imgWidth: system.windowWidth,
             imgHeight: system.windowHeight - footerHeight,
-            diff: (system.windowHeight - footerHeight - system.windowWidth) / 2,
             ratio: (system.windowHeight-footerHeight) / system.windowWidth
         })
         wx.connectSocket({
-            url: 'ws://127.0.0.1:20001',              
+            url: 'ws://10.86.98.106:20001',              
             header:{
                 'content-type': 'application/json'
             }
@@ -50,8 +50,7 @@ Page({
             console.log('closed!!!!')
         })
     },  
-    imgBindload(e) {
-        
+    imgBindload(e) {        
         if (this.data.firstLoad && this.data.keepRation){
             let localWidth = e.detail.width
             let localHeight = e.detail.height
@@ -67,15 +66,15 @@ Page({
             if (localRatio > this.data.ratio){
                 this.setData({
                     imgWidth: tmpWidth,
+                    alignLeft: (this.data.canvasWidth - tmpWidth) / 2, 
                     ratio: localRatio,
-                    diff: (this.data.imgHeight - tmpWidth) / 2,
                     firstLoad: false,
                 })
             }else{
                 this.setData({
                     imgHeight: tmpHeight,
+                    alignTop: (this.data.canvasHeight - tmpHeight) / 2,
                     ratio: localRatio,
-                    diff: (tmpHeight - this.data.imgWidth) / 2,
                     firstLoad: false,
                 })
             }
@@ -91,7 +90,7 @@ Page({
             })
             if (this.data.rotate){
                 this.setData({
-                    rotateStyle: 'transform: rotate(90deg) translate('+ this.data.diff + 'px); '
+                    rotateStyle: 'transform: rotate(90deg);'
                 })
             }                                                                     
         }          
@@ -105,11 +104,11 @@ Page({
     },
     handleStart(e){      
         let touch = e.changedTouches[0]
-        let scalex = touch.clientX  / this.data.canvasWidth
-        let scaley = touch.clientY  / this.data.canvasHeight        
+        let scalex = (touch.clientX - this.data.alignLeft)  / this.data.imgWidth
+        let scaley = (touch.clientY - this.data.alignTop) / this.data.imgHeight        
         if (this.data.rotate){
-            scalex = touch.clientY / this.data.imgWidth
-            scaley = 1 - touch.clientX / this.data.imgHeight
+            scalex = (touch.clientY - this.data.alignTop) / this.data.imgWidth
+            scaley = 1 -(touch.clientX - this.data.alignLeft) / this.data.imgHeight
         }
         let msg = JSON.stringify({
             "msg_type": 2,
@@ -123,11 +122,11 @@ Page({
     },
     handleMove(e){
         let touch = e.changedTouches[0]
-        let scalex = touch.clientX  / this.data.canvasWidth
-        let scaley = touch.clientY  / this.data.canvasHeight        
+        let scalex = (touch.clientX - this.data.alignLeft)  / this.data.imgWidth
+        let scaley = (touch.clientY - this.data.alignTop) / this.data.imgHeight        
         if (this.data.rotate){
-            scalex = touch.clientY / this.data.imgWidth
-            scaley = 1 - touch.clientX / this.data.imgHeight
+            scalex = (touch.clientY - this.data.alignTop) / this.data.imgWidth
+            scaley = 1 -(touch.clientX - this.data.alignLeft) / this.data.imgHeight
         }
         let msg = JSON.stringify({
             "msg_type": 2,
@@ -141,11 +140,11 @@ Page({
     },
     handleEnd(e){
         let touch = e.changedTouches[0]
-        let scalex = touch.clientX  / this.data.canvasWidth
-        let scaley = touch.clientY  / this.data.canvasHeight        
+        let scalex = (touch.clientX - this.data.alignLeft)  / this.data.imgWidth
+        let scaley = (touch.clientY - this.data.alignTop) / this.data.imgHeight        
         if (this.data.rotate){
-            scalex = touch.clientY / this.data.imgWidth
-            scaley = 1 - touch.clientX / this.data.imgHeight
+            scalex = (touch.clientY - this.data.alignTop) / this.data.imgWidth
+            scaley = 1 -(touch.clientX - this.data.alignLeft) / this.data.imgHeight
         }
         let msg = JSON.stringify({
             "msg_type": 2,
