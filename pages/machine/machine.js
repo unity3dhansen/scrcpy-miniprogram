@@ -1,5 +1,7 @@
 Page({
     data: {
+        footerHeight: '30',
+        keepRation: false,
         canvasWidth: '100px',
         canvasHeight: '100px',
         imgWidth: '100px',
@@ -9,17 +11,22 @@ Page({
         imgData: '',
         diff: '0px',
         socketOpen: false,
+        ratio: 0,
+        blankStyle: '',
+        firstLoad: true,        
     },
 
     onLoad() {
         var system = wx.getSystemInfoSync()
         var _this = this
+        var footerHeight = this.data.footerHeight
         this.setData({
             canvasWidth: system.windowWidth,
-            canvasHeight: system.windowHeight - 30,
+            canvasHeight: system.windowHeight - footerHeight,
             imgWidth: system.windowWidth,
-            imgHeight: system.windowHeight - 30,
-            diff: (system.windowHeight - 30 - system.windowWidth) / 2,
+            imgHeight: system.windowHeight - footerHeight,
+            diff: (system.windowHeight - footerHeight - system.windowWidth) / 2,
+            ratio: (system.windowHeight-footerHeight) / system.windowWidth
         })
         wx.connectSocket({
             url: 'ws://127.0.0.1:20001',              
@@ -44,9 +51,39 @@ Page({
         })
     },  
     imgBindload(e) {
+        
+        if (this.data.firstLoad && this.data.keepRation){
+            let localWidth = e.detail.width
+            let localHeight = e.detail.height
+            if (localWidth > localHeight){
+                let tmp = localWidth
+                localWidth = localHeight
+                localHeight = tmp
+            }
+
+            let localRatio = localHeight / localWidth
+            let tmpWidth = this.data.imgHeight * localWidth / localHeight
+            let tmpHeight = this.data.imgWidth * localHeight / localWidth
+            if (localRatio > this.data.ratio){
+                this.setData({
+                    imgWidth: tmpWidth,
+                    ratio: localRatio,
+                    diff: (this.data.imgHeight - tmpWidth) / 2,
+                    firstLoad: false,
+                })
+            }else{
+                this.setData({
+                    imgHeight: tmpHeight,
+                    ratio: localRatio,
+                    diff: (tmpHeight - this.data.imgWidth) / 2,
+                    firstLoad: false,
+                })
+            }
+        } 
+         
         if (this.data.rotate != (e.detail.width > e.detail.height)){        
             let tmpWidth = this.data.imgWidth;         
-            let tmpHeight = this.data.imgHeight;                        
+            let tmpHeight = this.data.imgHeight;                                   
             this.setData({imgWidth:tmpHeight,
                 imgHeight:tmpWidth,
                 rotate:(e.detail.width > e.detail.height),
@@ -54,7 +91,7 @@ Page({
             })
             if (this.data.rotate){
                 this.setData({
-                    rotateStyle: 'transform: rotate(90deg) translate('+ this.data.diff + 'px, ' + this.data.diff + 'px); '
+                    rotateStyle: 'transform: rotate(90deg) translate('+ this.data.diff + 'px); '
                 })
             }                                                                     
         }          

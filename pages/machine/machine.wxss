@@ -6,8 +6,7 @@
 .footer{
     background-color: rgba(0, 0, 0, 0.904);
     display: flex;
-    justify-content: space-between;
-    height: 30px;   
+    justify-content: space-between;     
 }
 .footer_item{
     border: 0.5px solid white;
@@ -18,4 +17,7 @@
 
 .canvas{
     position: relative;
+    background-color: black;
+    display: flex;
+    justify-content: center;
 }
