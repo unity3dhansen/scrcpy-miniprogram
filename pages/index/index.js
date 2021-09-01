@@ -4,17 +4,37 @@ const app = getApp()
 
 Page({
   data: {
-    motto: 'Hello World',
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     canIUseGetUserProfile: false,
-    canIUseOpenData: wx.canIUse('open-data.type.userAvatarUrl') && wx.canIUse('open-data.type.userNickName') // 如需尝试获取用户信息可改为false
+    canIUseOpenData: wx.canIUse('open-data.type.userAvatarUrl') && wx.canIUse('open-data.type.userNickName'), // 如需尝试获取用户信息可改为false
+    settingItems: [
+      {key:'是否显示导航栏', id:'navigate', value:
+          [{value: true, key: '显示'},
+          {value: false, key: '不显示', checked: 'true'}]},
+      {key:'显示方式', id:'screen', value:
+        [{key: '全屏', value: 'full', checked:'true'},
+        {key: '保持比例', value: 'ratio'}]
+      }        
+    ],
+    navigate: false,
+    screen: 'full',
   },
   // 事件处理函数
   bindViewTap() {
     wx.navigateTo({
-      url: '../logs/logs'
+      url: '../logs/logs',
+    })
+  },
+
+  linkToCloudPhone(){
+    let _this = this
+    wx.navigateTo({
+      url: '../machine/machine',
+      success: function(e){
+        e.eventChannel.emit('setting', {data: {navigate: _this.data.navigate, screen: _this.data.screen}})
+      }
     })
   },
   onLoad() {
@@ -44,5 +64,23 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
+  },
+  
+  scanQRCode(){
+    wx.scanCode({
+      // onlyFromCamera: true,
+      scanType: [],
+      success: (result) => {
+        console.log(result)
+      },
+      fail: (res) => {},
+      complete: (res) => {},
+    })
+  },
+
+  radioChange(e) {
+    this.setData({
+      [e.target.id]: e.detail.value
+    })    
   }
 })

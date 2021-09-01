@@ -17,10 +17,24 @@
       <text class="userinfo-nickname">{{userInfo.nickName}}</text>
     </block>
   </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+
+  <view class="setting">
+    <view class="page-section" wx:for="{{settingItems}}" wx:for-item="setItem" wx:key="key">
+      <view class="page-section-title">{{setItem.key}}</view>
+      <view class="weui-cells weui-cells_after-title" >
+        <radio-group bindchange="radioChange" style="display: flex; justify-content: space-between;" id="{{setItem.id}}">
+          <label class="weui-check__label check-item" wx:for="{{setItem.value}}" wx:key="value">
+            <view class="weui-cell__hd">
+              <radio value="{{item.value}}" checked="{{item.checked}}"/>
+            </view>
+            <view class="weui-cell__bd">{{item.key}}</view>
+          </label>
+        </radio-group>
+      </view>
+    </view>
   </view>
-  <view class="btn-area">
-    <navigator url="/pages/machine/machine" hover-class="navigator-hover">连接云真机</navigator>
-  </view>
+
+  <button bindtap="linkToCloudPhone" type="default">连接云真机</button>
+
+  <button bindtap="scanQRCode" type="primary" style="margin-top: 20px;"> 扫码 </button>
 </view>

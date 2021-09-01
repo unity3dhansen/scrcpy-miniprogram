@@ -17,10 +17,25 @@ Page({
         firstLoad: true,        
     },
 
-    onLoad() {
-        var system = wx.getSystemInfoSync()
+    onLoad() {               
         var _this = this
+        const eventChannel = this.getOpenerEventChannel()
+        eventChannel.on('setting', function(setting){
+            let footerHeight = 0            
+            let keepRation = false
+            if (setting.data.navigate)
+                footerHeight = 30
+            if (setting.data.screen == 'ratio')
+                keepRation = true
+            _this.setData({
+                footerHeight: footerHeight,
+                keepRation: keepRation
+            })                
+        })
+    
+        var system = wx.getSystemInfoSync() 
         var footerHeight = this.data.footerHeight
+
         this.setData({
             canvasWidth: system.windowWidth,
             canvasHeight: system.windowHeight - footerHeight,

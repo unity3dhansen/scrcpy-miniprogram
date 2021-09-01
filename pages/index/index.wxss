@@ -17,3 +17,16 @@
 .usermotto {
   margin-top: 200px;
 }
+
+.page-section{
+  margin-top:50px;
+  margin-bottom: 20px;  
+}
+
+.check-item{
+  display: flex;
+  justify-content: left;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-right: 20px;
+}
