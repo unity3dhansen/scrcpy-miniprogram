@@ -31,7 +31,7 @@ Page({
   linkToCloudPhone(){
     let _this = this
     wx.navigateTo({
-      url: '../machine/machine',
+      url: '../machine/machine?url=10.86.98.106:20001',
       success: function(e){
         e.eventChannel.emit('setting', {data: {navigate: _this.data.navigate, screen: _this.data.screen}})
       }

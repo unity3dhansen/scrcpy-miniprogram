@@ -14,11 +14,17 @@ Page({
         alignLeft: 0,
         alignTop: 0,
         blankStyle: '',
-        firstLoad: true,        
+        firstLoad: true,
+        lastTimeStamp: 0,
+        destUrl: '',
+        timespan: 1000,        
     },
 
-    onLoad() {               
+    onLoad(options) {                    
         var _this = this
+        _this.setData({
+            destUrl: options.url
+        })   
         const eventChannel = this.getOpenerEventChannel()
         eventChannel.on('setting', function(setting){
             let footerHeight = 0            
@@ -44,7 +50,7 @@ Page({
             ratio: (system.windowHeight-footerHeight) / system.windowWidth
         })
         wx.connectSocket({
-            url: 'ws://10.86.98.106:20001',              
+            url: 'ws://' + _this.data.destUrl,              
             header:{
                 'content-type': 'application/json'
             }
@@ -52,17 +58,28 @@ Page({
     
         wx.onSocketOpen(function(res) {
             _this.data.socketOpen = true
+            _this.data.lastTimeStamp = Date.now()
             console.log("open......")
         })
     
-        wx.onSocketMessage(function(res) {         
-            let data = "data:image/png;base64," + wx.arrayBufferToBase64(res.data);           
-            _this.setData({imgData:data})                                       
+        wx.onSocketMessage(function(res) {      
+            if (res.data.length < 13)
+                return
+        
+            let imageTime = Number(res.data.slice(0, 13))
+            let imageData = res.data.slice(13, res.data.length)
+
+            if (Date.now() - imageTime < this.data.timespan){
+                _this.setData({imgData: imageData})
+            }        
         })
     
         wx.onSocketClose(function(res) {
             _this.data.socketOpen = false
             console.log('closed!!!!')
+        })
+        wx.onSocketError((result) => {
+            console.log('error!!!!')
         })
     },  
     imgBindload(e) {        
